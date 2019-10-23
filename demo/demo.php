@@ -1,15 +1,13 @@
 <?php
 
-namespace EasyARSdk;
+use EasyARSdk\EasyARClientSdkCRS;
 
-//访问www.easyar.cn开通获取
 $appKey = '这里是Cloud Key';
 $appSecret = '这里是Cloud Secret';
-$appHost = '这里是Server-end (Target Mangement) URL';
-$timestamp = time();
+$appHost = '这里是Cloud URLs 不含端口的部分!!例如 xxx.cn1.crs.easyar.com';
+$timestamp = time(); //当你的时区配置为UTC+8时删除此行
 
 $sdk = new EasyARClientSdkCRS($appKey, $appSecret, $appHost, $timestamp);
-
 
 $rs = $sdk->ping();
 print_r($rs);
@@ -97,6 +95,16 @@ if ($rs->statusCode == 0) {
 /*
 $image = base64_encode(file_get_contents('1.jpg'));
 $rs = $sdk->detection($image);
+if ($rs->statusCode == 0) {
+	print_r($rs->result->grade);
+} else {
+	echo $rs->result->message;
+}
+*/
+
+/*
+$image = base64_encode(file_get_contents('1.jpg'));
+$rs = $sdk->search($image);
 if ($rs->statusCode == 0) {
 	print_r($rs->result->grade);
 } else {

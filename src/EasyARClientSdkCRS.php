@@ -48,7 +48,7 @@ class EasyARClientSdkCRS
         $this->appSecret = $appSecret;
         $this->appHost = 'http://' . $appHost;
 
-        $this->timestamp = $timestamp ? $timestamp : time();
+        $this->timestamp = $timestamp ? $timestamp : time() - 8 * 3600;
     }
 
     /**
@@ -62,7 +62,7 @@ class EasyARClientSdkCRS
      */
     public function ping()
     {
-        $rs = Http::get($this->appHost . '/ping', '');
+        $rs = Http::get($this->appHost . ':8888' . '/ping', '');
         return json_decode($rs);
     }
 
@@ -77,7 +77,7 @@ class EasyARClientSdkCRS
         $params['limit'] = (string)$limit;
         $params['last'] = (string)$last;
         $params = $this->getSign($params);
-        $rs = Http::get($this->appHost . '/targets/', $params);
+        $rs = Http::get($this->appHost . ':8888' . '/targets/', $params);
         return json_decode($rs);
     }
 
@@ -89,7 +89,7 @@ class EasyARClientSdkCRS
     public function info($targetId)
     {
         $params = $this->getSign();
-        $rs = Http::get($this->appHost . '/target/' . $targetId, $params);
+        $rs = Http::get($this->appHost . ':8888' . '/target/' . $targetId, $params);
         return json_decode($rs);
     }
 
@@ -101,7 +101,7 @@ class EasyARClientSdkCRS
     public function delete($targetId)
     {
         $params = $this->getSign();
-        $rs = Http::delete($this->appHost . '/target/' . $targetId, $params);
+        $rs = Http::delete($this->appHost . ':8888' . '/target/' . $targetId, $params);
         return json_decode($rs);
     }
 
@@ -122,7 +122,7 @@ class EasyARClientSdkCRS
             'Content-Length: ' . strlen($data)
         ];
 
-        $rs = Http::post($this->appHost . '/targets/', $data, $headers);
+        $rs = Http::post($this->appHost . ':8888' . '/targets/', $data, $headers);
         return json_decode($rs);
     }
 
@@ -141,7 +141,7 @@ class EasyARClientSdkCRS
             'Content-Length: ' . strlen($data)
         ];
 
-        $rs = Http::put($this->appHost . '/target/' . $targetId, $data, $headers);
+        $rs = Http::put($this->appHost . ':8888' . '/target/' . $targetId, $data, $headers);
         return json_decode($rs);
     }
 
@@ -152,7 +152,7 @@ class EasyARClientSdkCRS
     public function targetsCount()
     {
         $params = $this->getSign();
-        $rs = Http::get($this->appHost . '/targets/count', $params);
+        $rs = Http::get($this->appHost . ':8888' . '/targets/count', $params);
         return json_decode($rs);
     }
 
@@ -171,7 +171,7 @@ class EasyARClientSdkCRS
             'Content-Length: ' . strlen($data)
         ];
 
-        $rs = Http::post($this->appHost . '/similar/', $data, $headers);
+        $rs = Http::post($this->appHost . ':8888' . '/similar/', $data, $headers);
         return json_decode($rs);
     }
 
@@ -191,7 +191,26 @@ class EasyARClientSdkCRS
             'Content-Length: ' . strlen($data)
         ];
 
-        $rs = Http::post($this->appHost . '/grade/detection/', $data, $headers);
+        $rs = Http::post($this->appHost . ':8888' . '/grade/detection/', $data, $headers);
+        return json_decode($rs);
+    }
+
+
+    /**
+     * 搜索识别目标
+     * @param $image
+     * @return mixed
+     */
+    public function search($image)
+    {
+        $params['image'] = $image;
+        $params = $this->getSign($params);
+        $data = json_encode($params);
+        $headers = [
+            'Content-Type: application/json; charset=utf-8',
+            'Content-Length: ' . strlen($data)
+        ];
+        $rs = Http::post($this->appHost . ':8080' . '/search/', $data, $headers);
         return json_decode($rs);
     }
 
